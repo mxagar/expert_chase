@@ -134,3 +134,6 @@ dmypy.json
 data/*
 utils
 .vscode
+conda_.yaml
+requirements_.txt
+eda_fe_summary
