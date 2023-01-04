@@ -1,4 +1,4 @@
-name: techspert
+name: expert-env
 channels:
   - conda-forge
   - defaults
