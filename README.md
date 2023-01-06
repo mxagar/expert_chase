@@ -5,8 +5,8 @@ We are currently living the advent of the creator economy and the remote work, w
 Companies like [Techspert](https://techspert.com) have embraced that change we are living and match companies and professionals. Yet finding proper experts that are willing to offer consultancy is still a challenge. This repository contains a related dataset and deals with one aspect around that challenge, summarized as follows:
 
 > For each client project, suitable experts are searched, to whom an outreach email is sent. The order that the experts appeared in the search is recorded and whether each expert has responded (or not) to each outreach email.
-
-> [The goal] is to **analyse and prepare this data and propose approaches or models that could be investigated to re-rank the profiles so that the top experts have the highest probability of responding positively.**
+>
+> [The goal] is to **analyze and prepare this data and propose approaches or models that could be investigated to re-rank the profiles so that the top experts have the highest probability of responding positively.**
 
 ## Table of Contents
 
@@ -15,14 +15,11 @@ Companies like [Techspert](https://techspert.com) have embraced that change we a
   - [Dataset](#dataset)
   - [How to Use This Project](#how-to-use-this-project)
     - [Installing Dependencies for Custom Environments](#installing-dependencies-for-custom-environments)
-  - [Notes on the Implemented Analysis and Modeling](#notes-on-the-implemented-analysis-and-modeling)
+  - [Implemented Analysis and Modeling](#implemented-analysis-and-modeling)
     - [Assumptions](#assumptions)
-    - [Summary of Implementations](#summary-of-implementations)
-    - [Notes on Potential Models](#notes-on-potential-models)
-  - [Results, Insights](#results-insights)
-    - [Basic Findings](#basic-findings)
-    - [Relevant Insights](#relevant-insights)
+    - [Summary of Findings and Results](#summary-of-findings-and-results)
   - [Next Steps and Possible Improvements](#next-steps-and-possible-improvements)
+    - [Notes on Further Potential Models](#notes-on-further-potential-models)
   - [Authorship](#authorship)
 
 ## Dataset
@@ -45,28 +42,34 @@ The directory of the project consists of the following files:
 
 ```
 .
-├── LearningToRank_Challenge.docx   # Instructions
-├── README.md                       # This file
-├── conda.yaml                      # Environment dependencies
-├── data                            # Dataset
-│   └── data_Nov_2022.csv           # (not committed)
-├── expert_analysis.ipynb           # Main notebook
-└── requirements.txt                # Additional dependencies (empty)
+├── LearningToRank_Challenge.docx             # Instructions
+├── README.md                                 # This file (Markdown)
+├── README.pdf                                # This file (PDF)
+├── assets                                    # Results plots        
+│   ├── feature_comparison_test.png
+│   └── ...
+├── conda.yaml                                # Environment dependencies
+├── data                                      # Dataset (different versions)
+│   ├── data_Nov_2022.csv                     # Original
+│   ├── data_Nov_2022_preprocessed.csv        # Pre-processed
+│   └── data_Nov_2022_reduced_experts.csv     # Pre-processed and reduced
+├── expert_analysis.ipynb                     # Main notebook
+├── requirements.txt                          # Additional dependencies (empty)
+├── rf1.pickle                                # Model 1 serialized
+├── rf2.pickle                                # Model 2 serialized
+└── rf3.pickle                                # Model 3 serialized
 ```
 
-At the present development stage, the complete implementation is in the Jupyter notebook [`expert_analysis.ipynb`](expert_analysis.ipynb). You can run the notebook in the following ways:
-
-1. In a custom environment, e.g., locally or on a container. To that end, you can create a [conda](https://docs.conda.io/en/latest/) environment and install the [dependencies](#installing-dependencies-for-custom-environments) as explained below. Then, you need to open the notebook, i.e.: 
+At the present development stage, the complete implementation is in the Jupyter notebook [`expert_analysis.ipynb`](expert_analysis.ipynb). You can run the notebook in a custom environment, e.g., locally or in a container. For instance, to run it locally, you can create a [conda](https://docs.conda.io/en/latest/) environment and install the [dependencies](#installing-dependencies-for-custom-environments) as explained below. Then, you need to open the notebook, i.e.: 
  
-    ```bash
-    jupyter lab . &
-    ```
+```bash
+jupyter lab . &
+```
 
-2. In Google Colab. For that, simply click on the following link:
-
-    [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/mxagar/expert_chase/blob/main/expert_analysis.ipynb)
-
+<!--
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/mxagar/expert_chase/blob/main/expert_analysis.ipynb)
 :warning: The dataset is not available via Google Colab due to confidentiality reasons. Thus, if you want to open the notebook on Google Colab you need upload the dataset on your own.
+-->
 
 ### Installing Dependencies for Custom Environments
 
@@ -82,43 +85,63 @@ If you'd like to control where the notebook runs, you need to create a custom en
 conda env create -f conda.yaml
 conda activate expert-env
 
-# SpaCy model
-python -m spacy download en_core_web_sm
-
 # Optional: Install any pip packages you add later on
+# Currently, requirements.txt is empty, because I moved
+# all packages to conda.yaml 
 pip install requirements.txt
-
-# Optional: Track any changes and versions you have
-conda env export > conda_.yaml
-pip freeze > requirements_.txt
 ```
 
 List of most important dependencies:
 
-- Scikit-Learn
 - Pandas
+- Scikit-Learn
+- Scipy
 - Matplotlib
 - Seaborn
 
-## Notes on the Implemented Analysis and Modeling
+## Implemented Analysis and Modeling
+<!-- A description of interesting parts of your solution and potential improvements or further work -->
+
+The notebook is structured in 4 sections
+
+1. **Dataset: Load and First Exposure**
+2. **Data Preprocessing, Cleaning and Basic Feature Engineering**
+3. **More Exploratory Data Analysis and Hypothesis Testing**
+4. **Modeling: First Approach**
 
 ### Assumptions
+<!-- A list of assumption you made and justification of your design decisions -->
 
-### Summary of Implementations
 
-### Notes on Potential Models
+### Summary of Findings and Results
+<!-- A summary of any findings when preparing the data -->
 
-## Results, Insights
+<p align="center">
+  <img src="./assets/search_ranking_distribution.png" alt="Search ranking distribution." width=800px>
+</p>
 
-### Basic Findings
+<p align="center">
+  <img src="./assets/feature_comparison_test.png" alt="T/Z Test statistics." width=400px>
+</p>
 
-### Relevant Insights
+<p align="center">
+  <img src="./assets/model2_roc_curve_test.png" alt="ROC Curve." width=400px>
+</p>
+
+<p align="center">
+  <img src="./assets/model2_feature_importances.png" alt="Feature importances." width=450px>
+</p>
 
 
 ## Next Steps and Possible Improvements
 
 - [ ] A
 - [ ] B
+
+### Notes on Further Potential Models
+<!-- Brief notes on potential models that could be trained on this data -->
+
+
 
 <!--
 ## References, Interesting Links
