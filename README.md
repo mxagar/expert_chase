@@ -16,8 +16,11 @@ Companies like [Techspert](https://techspert.com) have embraced that change we a
   - [How to Use This Project](#how-to-use-this-project)
     - [Installing Dependencies for Custom Environments](#installing-dependencies-for-custom-environments)
   - [Implemented Analysis and Modeling](#implemented-analysis-and-modeling)
-    - [Assumptions](#assumptions)
+    - [Reduced Dataset](#reduced-dataset)
+    - [Summary of Assumptions](#summary-of-assumptions)
     - [Summary of Findings and Results](#summary-of-findings-and-results)
+      - [Hypothesis Tests](#hypothesis-tests)
+      - [Models](#models)
   - [Next Steps and Possible Improvements](#next-steps-and-possible-improvements)
     - [Notes on Further Potential Models](#notes-on-further-potential-models)
   - [Authorship](#authorship)
@@ -102,19 +105,56 @@ List of most important dependencies:
 ## Implemented Analysis and Modeling
 <!-- A description of interesting parts of your solution and potential improvements or further work -->
 
-The notebook is structured in 4 sections
+The main notebook is structured in 4 parts that were implemented chronologically, following the typical data science project workflow. Each part/section is composed of several subsections, which contain, among others, the findings discovered at each stage. In the following, a brief content description of each part is provided:
 
-1. **Dataset: Load and First Exposure**
-2. **Data Preprocessing, Cleaning and Basic Feature Engineering**
-3. **More Exploratory Data Analysis and Hypothesis Testing**
-4. **Modeling: First Approach**
+1. **Dataset: Load and First Exposure** &mdash; As the title specifies, here, the first contact with the dataset is carried out. The following objectives are met:
+   - Understand the features and their relationship.
+   - Determine the needs for cleaning and encoding (e.g., processing for time, countries and emails).
+   - Compute basic descriptive statistics (e.g., outreach success rate).
 
-### Assumptions
+2. **Data Preprocessing, Cleaning and Basic Feature Engineering** &mdash; This section is the mo
+
+3. **More Exploratory Data Analysis and Hypothesis Testing**: Once we have the pre-processed and reduced dataset, we can explore it visually and with statistical tests on it. In this section, first, the reduced dataset is split in two groups: entries of experts with positive (successful) outreach and entries with negative outreach. Then, plots are generated for these two groups: (i) ranking distributions, (ii) box pots (numerical variables), (iii) bar charts (binary variables). Finally, hypothesis tests are performed on the two groups for each feature. Hypothesis testing helps to identify whether two samples belong to the same population by comparing their means (e.g., T Test) or proportions (Z Test). A significance level is chosen, alpha, and if the probability of the computed statistic yields a smaller *p-value*, both samples are considered to be different. In the context 
+
+4. **Modeling: First Approach** &mdash; Even though in the original challenge it is not required, I have built some simple models out of genuine curiosity:
+   - Model 1: A random forest classifier which predicts the outreach success given all the features available (including the ranking values).
+   - Model 2: A random forest classifier which predicts the outreach success given all the features available except the ranking values.
+   - Model 3: A random forest regressor which tries to predict the best ranking given the rest features, except the outreach success.
+
+### Reduced Dataset
+
+The pre-processed and reduced dataset...
+
+### Summary of Assumptions
 <!-- A list of assumption you made and justification of your design decisions -->
 
+- The requirements for the hypothesis tests are not checked (i.e., it is assumed they are met).
 
 ### Summary of Findings and Results
 <!-- A summary of any findings when preparing the data -->
+
+This section refers to the outcomes obtained in the parts 3 and 4 of the notebook.
+
+#### Hypothesis Tests
+
+As far as the hypothesis tests are concerned, we have the following results, supported by the appended figures:
+
+- The following experts are associated with positive outreach, thus, their ranking should be minimized (smaller ranking is better):
+
+  - `num_searches`: Number of appearances of the expert in the original dataset.
+  - `extension_academia`: Whether the expert has an email with an academia extension.
+  - Countries where the expert lives: US, NL.
+  - `num_emails`: Number of emails of the expert.
+
+- The following features are associated with negative outreach, thus, their ranking should be maximized:
+
+  - `extension_country`: Whether the expert has an email with company extension.
+  - Countries where the expert lives: ES, GB, FR, DE, CA, IT, SE.
+
+In the following, two figures are shown:
+
+- The ranking distributions of the groups with positive and negative outreach values.
+- The T and Z statistics for each feature considering the sample populations of the groups with positive and negative outreach values. The `alpha = 0.05` or `T/Z approx. 2` threshold is drawn; feature bars that cross it denote significantly different groups. Additionally, the sign of the statistic is color-coded: red is negative (larger mean/proportion for positive outreach), blue positive (larger mean/proportion for negative outreach).
 
 <p align="center">
   <img src="./assets/search_ranking_distribution.png" alt="Search ranking distribution." width=800px>
@@ -123,6 +163,22 @@ The notebook is structured in 4 sections
 <p align="center">
   <img src="./assets/feature_comparison_test.png" alt="T/Z Test statistics." width=400px>
 </p>
+
+#### Models
+
+Among models 1 & 2, the latter is the most interesting one, because it predicts outreach success without considering the ranking values. Since the goals is to improve the ranking system, it is sensible to build a model which predicts the outreach independently of the ranking; then, we obtain its most important features and adjust the ranking later on. A model which is built with the ranking values is of less use (model 1).
+
+Unfortunately, the ROC AUC of model 2 is quite low: 0.69. However, the Gini coefficients of the features are in line with the results from the hypothesis tests, being the most predictive features:
+
+- `num_searches`: Number of appearances of the expert in the original dataset.
+- `num_emails`: Number of emails of the expert.
+- `extension_academia`: Whether the expert has an email with an academia extension.
+- `countries_US`: Whether the expert lives in the US.
+- `extension_company`: Whether the expert has an email with company extension.
+
+In its current state, model 3 is a poor predictor, with an R2 = 0.15. Thus, the model fails to predict the ranking values from the rest of the features.
+
+In the following figures the ROC AUC of model 2 and its feature importances are shown.
 
 <p align="center">
   <img src="./assets/model2_roc_curve_test.png" alt="ROC Curve." width=400px>
@@ -136,7 +192,10 @@ The notebook is structured in 4 sections
 ## Next Steps and Possible Improvements
 
 - [ ] A
-- [ ] B
+- [ ] Get domain-related information that could be helpful; for instance:
+  - [ ] How is ranking determined?
+  - [ ] Get more information about expert candidates, e.g., years of experience, number of companies they've worked in, whether they've done consulting or not, etc.
+  - [ ] Which is the exact definition of a successful outreach? For instance, a rejection email is a success?
 
 ### Notes on Further Potential Models
 <!-- Brief notes on potential models that could be trained on this data -->
